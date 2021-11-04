@@ -1,21 +1,23 @@
 import kotlinx.html.InputType
 import kotlinx.html.js.onChangeFunction
 import org.w3c.dom.HTMLInputElement
+import react.Props
 import react.RBuilder
 import react.RComponent
-import react.RProps
-import react.RState
+import react.State
 import react.dom.attrs
 import react.dom.div
 import react.dom.input
 
-external interface WelcomeProps : RProps {
+external interface WelcomeProps : Props {
     var name: String
 }
 
-data class WelcomeState(val name: String) : RState
-
+@ExperimentalJsExport
 @JsExport
+data class WelcomeState(val name: String) : State
+
+@ExperimentalJsExport
 class Welcome(props: WelcomeProps) : RComponent<WelcomeProps, WelcomeState>(props) {
 
     init {
