@@ -30,7 +30,12 @@ kotlin {
         }
     }
     sourceSets {
-        val commonMain by getting
+        val commonMain by getting {
+            dependencies {
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0")
+                implementation("io.ktor:ktor-client-core:1.6.5")
+            }
+        }
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test"))
@@ -38,9 +43,10 @@ kotlin {
         }
         val jvmMain by getting {
             dependencies {
-                implementation("io.ktor:ktor-server-netty:1.6.0")
-                implementation("io.ktor:ktor-html-builder:1.6.0")
-                implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.2")
+                implementation("io.ktor:ktor-server-core:1.6.5")
+                implementation("io.ktor:ktor-server-netty:1.6.5")
+                implementation("io.ktor:ktor-serialization:1.6.5")
+                implementation("ch.qos.logback:logback-classic:1.2.6")
             }
         }
         val jvmTest by getting

@@ -1,38 +1,52 @@
-import io.ktor.application.call
-import io.ktor.html.respondHtml
-import io.ktor.http.HttpStatusCode
-import io.ktor.routing.get
-import io.ktor.routing.routing
-import io.ktor.server.engine.embeddedServer
-import io.ktor.server.netty.Netty
-import io.ktor.http.content.resources
-import io.ktor.http.content.static
-import kotlinx.html.*
-
-fun HTML.index() {
-    head {
-        title("Hello from Ktor!")
-    }
-    body {
-        div {
-            +"Hello from Ktor"
-        }
-        div {
-            id = "root"
-        }
-        script(src = "/static/kotlin-jvm-js-fullstack-demo.js") {}
-    }
-}
+import io.ktor.application.*
+import io.ktor.features.*
+import io.ktor.http.*
+import io.ktor.request.*
+import io.ktor.response.*
+import io.ktor.routing.*
+import io.ktor.serialization.*
+import io.ktor.server.engine.*
+import io.ktor.server.netty.*
 
 fun main() {
-    embeddedServer(Netty, port = 8080, host = "127.0.0.1") {
+    embeddedServer(Netty, port = 9090, host = "127.0.0.1") {
+        install(ContentNegotiation) {
+            json()
+        }
+        install(CORS) {
+            method(HttpMethod.Get)
+            method(HttpMethod.Post)
+            method(HttpMethod.Delete)
+            anyHost()
+        }
+        install(Compression) {
+            gzip()
+        }
+
         routing {
-            get("/") {
-                call.respondHtml(HttpStatusCode.OK, HTML::index)
+            get("/hello") {
+                call.respondText("Hello, API!")
             }
-            static("/static") {
-                resources()
+            route(ShoppingListItem.path) {
+                get {
+                    call.respond(shoppingList)
+                }
+                post {
+                    shoppingList.add(call.receive())
+                    call.respond(HttpStatusCode.OK)
+                }
+                delete("/{id}") {
+                    val id = call.parameters["id"]?.toInt() ?: error("Invalid delete request")
+                    shoppingList.removeIf { it.id == id }
+                    call.respond(HttpStatusCode.OK)
+                }
             }
         }
     }.start(wait = true)
 }
+
+val shoppingList = mutableListOf(
+    ShoppingListItem("Cucumbers \uD83E\uDD52", 1),
+    ShoppingListItem("Tomatoes \uD83C\uDF45", 2),
+    ShoppingListItem("Orange Juice \uD83C\uDF4A", 3)
+)
