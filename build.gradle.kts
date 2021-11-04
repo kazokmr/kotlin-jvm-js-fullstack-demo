@@ -21,7 +21,7 @@ kotlin {
         }
         withJava()
     }
-    js(LEGACY) {
+    js(IR) {
         binaries.executable()
         browser {
             commonWebpackConfig {
