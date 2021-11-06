@@ -1,3 +1,4 @@
+import com.mongodb.ConnectionString
 import io.ktor.application.*
 import io.ktor.features.*
 import io.ktor.http.*
@@ -12,8 +13,27 @@ import org.litote.kmongo.coroutine.coroutine
 import org.litote.kmongo.eq
 import org.litote.kmongo.reactivestreams.KMongo
 
+// HostとPortを環境変数から取る。無ければデフォルトを設定する
+val port = System.getenv("PORT")?.toInt() ?: 9090
+val host = System.getenv("HOST")?.toString() ?: "127.0.0.1"
+
+// MongoDBが外部サーバーの場合に環境変数から接続記述子を取得する。設定する際はretryWrites=falseにして接続エラー時に再接続しないようにする（理由は不明。ただの例かもしれない）
+val connectionString: ConnectionString? = System.getenv("MONGODB_URI")?.let {
+    ConnectionString("$it?retryWrites=false")
+}
+
+// 接続記述子が未設定なら標準接続とする
+val client =
+    if (connectionString != null) {
+        KMongo.createClient(connectionString).coroutine
+    } else {
+        KMongo.createClient().coroutine
+    }
+val database = client.getDatabase(connectionString?.database ?: "shoppingList")
+val collection = database.getCollection<ShoppingListItem>()
+
 fun main() {
-    embeddedServer(Netty, port = 9090, host = "127.0.0.1") {
+    embeddedServer(Netty, port = port, host = host) {
         install(ContentNegotiation) {
             json()
         }
@@ -57,7 +77,3 @@ fun main() {
         }
     }.start(wait = true)
 }
-
-val client = KMongo.createClient().coroutine
-val database = client.getDatabase("shoppingList")
-val collection = database.getCollection<ShoppingListItem>()
