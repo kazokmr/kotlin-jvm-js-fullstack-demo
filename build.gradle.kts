@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
+
 plugins {
     kotlin("multiplatform") version "1.5.31"
     application
@@ -52,8 +54,12 @@ kotlin {
         val jvmTest by getting
         val jsMain by getting {
             dependencies {
-                implementation("org.jetbrains.kotlin-wrappers:kotlin-react:17.0.2-pre.262-kotlin-1.5.31")
-                implementation("org.jetbrains.kotlin-wrappers:kotlin-react-dom:17.0.2-pre.262-kotlin-1.5.31")
+//                implementation("io.ktor:ktor-client-js:1.6.5")
+//                implementation("io.ktor:ktor-client-json:1.6.5")
+//                implementation("io.ktor:ktor-client-serialization:1.6.5")
+
+//                implementation("org.jetbrains.kotlin-wrappers:kotlin-react:17.0.2-pre.262-kotlin-1.5.31")
+//                implementation("org.jetbrains.kotlin-wrappers:kotlin-react-dom:17.0.2-pre.262-kotlin-1.5.31")
             }
         }
         val jsTest by getting
@@ -64,9 +70,15 @@ application {
     mainClass.set("ServerKt")
 }
 
-tasks.named<Copy>("jvmProcessResources") {
-    val jsBrowserDistribution = tasks.named("jsBrowserDistribution")
-    from(jsBrowserDistribution)
+tasks.named<Jar>("jvmJar") {
+    val taskName = if (project.hasProperty("isProduction")) {
+        "jsBrowserProductionWebpack"
+    } else {
+        "jsBrowserDevelopmentWebpack"
+    }
+    val webpackTask = tasks.getByName<KotlinWebpack>(taskName)
+    dependsOn(webpackTask)
+    from(File(webpackTask.destinationDirectory, webpackTask.outputFileName))
 }
 
 tasks.named<JavaExec>("run") {
