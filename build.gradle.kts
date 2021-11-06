@@ -54,12 +54,12 @@ kotlin {
         val jvmTest by getting
         val jsMain by getting {
             dependencies {
-                implementation("io.ktor:ktor-client-js:1.6.5")
-                implementation("io.ktor:ktor-client-json:1.6.5")
-                implementation("io.ktor:ktor-client-serialization:1.6.5")
+//                implementation("io.ktor:ktor-client-js:1.6.5")
+//                implementation("io.ktor:ktor-client-json:1.6.5")
+//                implementation("io.ktor:ktor-client-serialization:1.6.5")
 
-                implementation("org.jetbrains.kotlin-wrappers:kotlin-react:17.0.2-pre.262-kotlin-1.5.31")
-                implementation("org.jetbrains.kotlin-wrappers:kotlin-react-dom:17.0.2-pre.262-kotlin-1.5.31")
+//                implementation("org.jetbrains.kotlin-wrappers:kotlin-react:17.0.2-pre.262-kotlin-1.5.31")
+//                implementation("org.jetbrains.kotlin-wrappers:kotlin-react-dom:17.0.2-pre.262-kotlin-1.5.31")
             }
         }
         val jsTest by getting
@@ -82,6 +82,6 @@ tasks.named<Jar>("jvmJar") {
 }
 
 tasks.named<JavaExec>("run") {
-//    dependsOn(tasks.named<Jar>("jvmJar"))
+    dependsOn(tasks.named<Jar>("jvmJar"))
     classpath(tasks.named<Jar>("jvmJar"))
 }
