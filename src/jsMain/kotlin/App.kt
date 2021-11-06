@@ -1,5 +1,7 @@
+import kotlinext.js.jsObject
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
+import kotlinx.html.js.onClickFunction
 import react.Props
 import react.dom.h1
 import react.dom.li
@@ -27,7 +29,25 @@ val App = fc<Props> { _ ->
             li {
                 key = item.id.toString()
                 +"[${item.priority}] ${item.desc}"
+                attrs.onClickFunction = {
+                    scope.launch {
+                        deleteShoppingListItem(item)
+                        shoppingList = getShoppingList()
+                    }
+                }
             }
         }
     }
+    child(
+        InputComponent,
+        props = jsObject {
+            onSubmit = { input ->
+                val cartItem = ShoppingListItem(input.replace("!", ""), input.count { it == '!' })
+                scope.launch {
+                    addShoppingListItem(cartItem)
+                    shoppingList = getShoppingList()
+                }
+            }
+        }
+    )
 }
