@@ -7,7 +7,7 @@ import react.dom.h1
 import react.dom.li
 import react.dom.ul
 import react.fc
-import react.useEffect
+import react.useEffectOnce
 import react.useState
 
 private val scope = MainScope()
@@ -15,7 +15,7 @@ private val scope = MainScope()
 val App = fc<Props> { _ ->
     var shoppingList by useState<List<ShoppingListItem>>(emptyList())
 
-    useEffect {
+    useEffectOnce {
         scope.launch {
             shoppingList = getShoppingList()
         }
