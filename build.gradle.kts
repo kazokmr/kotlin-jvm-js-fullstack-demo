@@ -49,6 +49,7 @@ kotlin {
                 implementation("io.ktor:ktor-server-netty:1.6.5")
                 implementation("io.ktor:ktor-serialization:1.6.5")
                 implementation("ch.qos.logback:logback-classic:1.2.6")
+                implementation("org.litote.kmongo:kmongo-coroutine-serialization:4.3.0")
             }
         }
         val jvmTest by getting
